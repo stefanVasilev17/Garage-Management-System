@@ -1,11 +1,13 @@
 package com.stefan.security.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 
 @Entity
-@Table(name = "car_table")
+@Table(name = "_car_table")
 @Data
+@Builder
 public class CarEntity {
 
     @Id

@@ -1,11 +1,13 @@
 package com.stefan.security.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 
 @Entity
-@Table(name="user_entity")
+@Table(name="_user_entity")
 @Data
+//@Builder
 public class UserEntity {
 
     @Id

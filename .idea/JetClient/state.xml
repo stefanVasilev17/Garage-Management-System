@@ -8,7 +8,7 @@
             <requestState>
               <option name="body">
                 <bodyState>
-                  <option name="raw" value="{&quot;brand&quot;: &quot;st&quot;, &quot;model&quot;: &quot;st&quot;, &quot;year&quot;: &quot;2021&quot;}" />
+                  <option name="raw" value="{&quot;brand&quot;: &quot;Mercedes&quot;, &quot;model&quot;: &quot;S-class&quot;, &quot;year&quot;: &quot;2021&quot;}" />
                   <option name="type" value="JSON" />
                 </bodyState>
               </option>
@@ -23,7 +23,7 @@
               <option name="id" value="f33d1ba2-81bd-490a-893e-ad89aa3fc1d2" />
               <option name="method" value="POST" />
               <option name="name" value="Draft" />
-              <option name="url" value="mydb.cxdsbj1clk05.us-east-1.rds.amazonaws.com:3306/login" />
+              <option name="url" value="http://localhost:3036/car" />
             </requestState>
           </list>
         </option>

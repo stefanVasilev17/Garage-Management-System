@@ -2,14 +2,16 @@ package com.stefan.security.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "brand_table")
+@Table(name = "_brand_table")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class BrandEntity {
 
     @Id
