@@ -12,4 +12,4 @@ spring:
       hibernate:
         format-sql: true
     database: mysql
-    database-platform: org.hibernate.dialect.MySQL8Dialect
+    database-platform: org.hibernate.dialect.MySQLDialect

@@ -1,0 +1,16 @@
+package com.stefan.security.service;
+
+import com.stefan.security.dto.CarDTO;
+
+import java.util.List;
+
+public interface CarService {
+
+    void save(CarDTO carDTO);
+
+    List<CarDTO> findAll();
+
+    CarDTO findById(Long id);
+
+    void delete(Long id);
+}
