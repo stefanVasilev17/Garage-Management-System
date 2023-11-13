@@ -10,7 +10,7 @@ public interface VehicleService
 {
   Vehicle create(Vehicle vehicle);
 
-  void fixVehicle(Long id, BigDecimal amountOfMoney);
+  <T> T fixVehicle(Long id, BigDecimal amountOfMoney,boolean byFacture,Long companyNumber);
 
   void deleteVehicle(Long id);
 

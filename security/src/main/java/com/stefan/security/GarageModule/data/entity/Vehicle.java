@@ -41,6 +41,7 @@ public class Vehicle extends BaseEntity
   @ManyToOne(cascade = CascadeType.MERGE)
   @JoinColumn(name = "mechanic_id")
   private Mechanic mechanic;
+  private boolean fixed;
 
 
 }

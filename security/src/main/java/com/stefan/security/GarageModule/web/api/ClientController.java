@@ -115,10 +115,12 @@ public class ClientController
    * @param id - id of the vehicle
    */
   @PatchMapping("/fix-vehicle/{id}/{amount}")
-  public void fixVehicleById(@PathVariable("id") Long id,
-                             @PathVariable("amount") BigDecimal amountOfMoney)
+  public <T> T fixVehicleById(@PathVariable("id") Long id,
+                             @PathVariable("amount") BigDecimal amountOfMoney,
+                             @RequestParam("byFacture") boolean byFacture,
+                             @RequestParam(value = "companyNumber",required = false) Long companyNumber)
   {
-    vehicleService.fixVehicle(id, amountOfMoney);
+    return vehicleService.fixVehicle(id, amountOfMoney,byFacture,companyNumber);
   }
 
   /**

@@ -5,7 +5,6 @@ import com.stefan.security.GarageModule.data.entity.Garage;
 import com.stefan.security.GarageModule.data.entity.Vehicle;
 import com.stefan.security.GarageModule.data.repository.ClientRepository;
 import com.stefan.security.GarageModule.data.repository.GarageRepository;
-import com.stefan.security.GarageModule.data.repository.VehicleRepository;
 import com.stefan.security.GarageModule.dto.ClientDTO;
 import com.stefan.security.GarageModule.services.ClientService;
 import com.stefan.security.GarageModule.services.VehicleService;
@@ -26,7 +25,6 @@ import java.util.stream.Collectors;
 public class ClientServiceImpl implements ClientService
 {
   private final ClientRepository  clientRepository;
-  private final VehicleRepository vehicleRepository;
   private final VehicleService    vehicleService;
   private final GarageRepository  garageRepository;
   private final ModelMapper        modelMapper = new ModelMapper();
