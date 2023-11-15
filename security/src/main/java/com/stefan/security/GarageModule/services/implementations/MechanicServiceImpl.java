@@ -1,6 +1,7 @@
 package com.stefan.security.GarageModule.services.implementations;
 
 import com.stefan.security.GarageModule.data.entity.Garage;
+import com.stefan.security.GarageModule.data.entity.KindOfServices;
 import com.stefan.security.GarageModule.data.entity.Mechanic;
 import com.stefan.security.GarageModule.data.repository.GarageRepository;
 import com.stefan.security.GarageModule.data.repository.MechanicRepository;
@@ -47,14 +48,14 @@ public class MechanicServiceImpl implements MechanicService
   @Override
   public Mechanic hireMechanic(Mechanic hiredMechanic)
   {
-    Optional<Garage> garage = garageRepository.findById(hiredMechanic.getGarage().getId());
+    Optional<Garage> garage = Optional.of(garageRepository.findById(hiredMechanic.getGarage().getId()).orElseThrow());
     garage.ifPresent(hiredMechanic::setGarage);
 
-    if (LIGHT.toString().equals(hiredMechanic.getQualification())
+    if (LIGHT.equals(hiredMechanic.getQualification())
         && hiredMechanic.getSalary().compareTo(BigDecimal.valueOf(2000)) > 0) {
       throw new ForbiddenException("Тhe qualification of the candidate does not allow a higher salary");
     }
-    else if (ADVANCED.toString().equals(hiredMechanic.getQualification())
+    else if (ADVANCED.equals(hiredMechanic.getQualification())
         && hiredMechanic.getSalary().compareTo(BigDecimal.valueOf(4000)) > 0) {
 
       throw new ForbiddenException("Тhe qualification of the candidate does not allow a higher salary");
@@ -70,7 +71,7 @@ public class MechanicServiceImpl implements MechanicService
   }
 
   @Override
-  public List<MechanicView> findMechanicByQualificationAndGarageId(String qualification, Long id)
+  public List<MechanicView> findMechanicByQualificationAndGarageId(KindOfServices qualification, Long id)
   {
     return mechanicRepository.findMechanicByQualificationAndGarageId(qualification, id).stream()
         .map(mechanic -> modelMapper.map(mechanic, MechanicView.class)).collect(Collectors.toList());

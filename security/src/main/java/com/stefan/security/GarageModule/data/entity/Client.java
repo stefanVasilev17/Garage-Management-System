@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import javax.validation.constraints.Min;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -28,6 +29,6 @@ public class Client extends Human
 
   @OneToMany(mappedBy = "client")
   @JsonIgnoreProperties("client")
-  private List<Vehicle> ownedVehicles;
+  private List<Vehicle> ownedVehicles = new ArrayList<>();
 
 }

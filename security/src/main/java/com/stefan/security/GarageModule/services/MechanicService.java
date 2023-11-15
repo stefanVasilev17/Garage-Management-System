@@ -1,5 +1,6 @@
 package com.stefan.security.GarageModule.services;
 
+import com.stefan.security.GarageModule.data.entity.KindOfServices;
 import com.stefan.security.GarageModule.data.entity.Mechanic;
 import com.stefan.security.GarageModule.dto.MechanicDTO;
 import com.stefan.security.GarageModule.web.view.MechanicView;
@@ -16,5 +17,5 @@ public interface MechanicService
 
   List<Mechanic> findAllMechanicsByGarageId(Long id);
 
-  List<MechanicView> findMechanicByQualificationAndGarageId(String qualification, Long id);
+  List<MechanicView> findMechanicByQualificationAndGarageId(KindOfServices qualification, Long id);
 }

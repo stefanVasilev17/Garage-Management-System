@@ -14,6 +14,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -44,9 +45,13 @@ public class VehicleServiceImpl implements VehicleService {
         return vehicleRepository.save(vehicle);
     }
 
-    //TODO: to implement that method could return CreditContract or CashReceipt.
     @Override
-    public PaymentInfo fixVehicle(Long id, BigDecimal amountOfMoney, boolean byFacture, Long companyNumber) {
+    public CashReceipt fixVehicle(Long id,
+                                  BigDecimal amountOfMoney,
+                                  boolean byFacture,
+                                  Long companyNumber,
+                                  boolean byCredit,
+                                  CreditContractReqBody contractReqBody) {
         if (byFacture && ObjectUtils.isEmpty(companyNumber)) {
             throw new NoSuchElementException("If you want facture to be created, you need to present a company number!");
         }
@@ -60,8 +65,10 @@ public class VehicleServiceImpl implements VehicleService {
 
         Client ownerOfTheVeh = vehicle.getClient();
 
-        if (amountOfMoney.compareTo(ownerOfTheVeh.getBudget()) > 0) {
-            throw new NoSuchElementException("Client's money are not enough.");
+        if (!byCredit) {
+            if (amountOfMoney.compareTo(ownerOfTheVeh.getBudget()) > 0) {
+                throw new NoSuchElementException("Client's money are not enough.");
+            }
         }
 
         findSuitableMechanic(vehicle, ownerOfTheVeh.getGarage().getId());
@@ -70,7 +77,9 @@ public class VehicleServiceImpl implements VehicleService {
         if (garageRepository.findById(ownerOfTheVeh.getGarage().getId()).isPresent()) {
             Garage garage = garageRepository.findById(ownerOfTheVeh.getGarage().getId()).get();
 
-            ownerOfTheVeh.setBudget(ownerOfTheVeh.getBudget().subtract(amountOfMoney));
+            if (!byCredit) {
+                ownerOfTheVeh.setBudget(ownerOfTheVeh.getBudget().subtract(amountOfMoney));
+            }
 
             clientRepository.save(ownerOfTheVeh);
             vehicle.setFixed(true);
@@ -79,18 +88,32 @@ public class VehicleServiceImpl implements VehicleService {
             garage.setTurnOver(amountOfMoney);
             garageRepository.save(garage);
 
-            //TODO: to implement the credit part.
             CashReceipt cashReceipt = new CashReceipt(ownerOfTheVeh, amountOfMoney, vehicle.getMechanicDecision());
 
-            //to implement the payment information as a facture or cash receipt.
             if (byFacture) {
                 cashReceipt.setByFacture(true);
             }
             vehicleRepository.deleteById(vehicle.getId());
 
-            return new PaymentInfo<>(cashReceipt);
+            if (byCredit) {
+                int creditDuration;
+                if (CreditDuration.ONE_YEAR.equals(contractReqBody.getCreditDuration())) {
+                    creditDuration = 12;
+                } else {
+                    creditDuration = 24;
+                }
 
-        }else {
+                return new CreditContractInfo(ownerOfTheVeh,
+                        cashReceipt.getAmount(),
+                        cashReceipt.getFixedParts(),
+                        cashReceipt.isByFacture(),
+                        amountOfMoney.divide(BigDecimal.valueOf(creditDuration), RoundingMode.CEILING),
+                        contractReqBody.getClientSalary(),
+                        creditDuration);
+            } else {
+                return cashReceipt;
+            }
+        } else {
             throw new NoSuchElementException("Missing information for the client. The payment could not be processed!");
         }
     }
@@ -101,9 +124,9 @@ public class VehicleServiceImpl implements VehicleService {
                 || vehicle.getMechanicDecision().contains(Problem.WHEEL.toString())
                 || vehicle.getMechanicDecision().contains(Problem.WHEELS.toString())) {
 
-            vehicle.setMechanic(mechanicRepository.findMechanicByQualificationAndGarageId("LIGHT", id).stream().findFirst().
-                    orElse(mechanicRepository.findMechanicByQualificationAndGarageId("ADVANCED", id).stream().findFirst().
-                            orElse(mechanicRepository.findMechanicByQualificationAndGarageId("FULL EXPERIENCE", id).stream().findFirst()
+            vehicle.setMechanic(mechanicRepository.findMechanicByQualificationAndGarageId(KindOfServices.LIGHT, id).stream().findFirst().
+                    orElse(mechanicRepository.findMechanicByQualificationAndGarageId(KindOfServices.ADVANCED, id).stream().findFirst().
+                            orElse(mechanicRepository.findMechanicByQualificationAndGarageId(KindOfServices.FULL_EXPERIENCE, id).stream().findFirst()
                                     .orElseThrow(() -> new NoSuchElementException("There are no mechanics with these qualifications!")))));
 
         }
@@ -113,14 +136,14 @@ public class VehicleServiceImpl implements VehicleService {
                 || vehicle.getMechanicDecision().contains(Problem.BREAKS.toString())
                 || vehicle.getMechanicDecision().contains(Problem.SUSPENSION.toString())) {
 
-            vehicle.setMechanics(mechanicRepository.findMechanicByQualificationAndGarageId("ADVANCED", id).stream().findFirst().
-                    orElse(mechanicRepository.findMechanicByQualificationAndGarageId("FULL_EXPERIENCE", id).stream().findFirst()
+            vehicle.setMechanics(mechanicRepository.findMechanicByQualificationAndGarageId(KindOfServices.ADVANCED, id).stream().findFirst().
+                    orElse(mechanicRepository.findMechanicByQualificationAndGarageId(KindOfServices.FULL_EXPERIENCE, id).stream().findFirst()
                             .orElseThrow(() -> new NoSuchElementException("There are no mechanics with these qualifications!"))).getName());
         }
 
         if (vehicle.getMechanicDecision().contains(Problem.GEARBOX.toString())
                 || vehicle.getMechanicDecision().contains(Problem.ENGINE.toString())) {
-            vehicle.setMechanics(mechanicRepository.findMechanicByQualificationAndGarageId("FULL EXPERIENCE", id).stream().findFirst()
+            vehicle.setMechanics(mechanicRepository.findMechanicByQualificationAndGarageId(KindOfServices.FULL_EXPERIENCE, id).stream().findFirst()
                     .orElseThrow(() -> new NoSuchElementException("There are no mechanics with these qualifications!")).getName());
         }
     }
@@ -150,11 +173,11 @@ public class VehicleServiceImpl implements VehicleService {
                 vehicle.setMechanicDecision(translateDriverComplaints.toString());
             }
         }
-
-        vehicle.setMechanicDecision(vehicle.getMechanicDecision().endsWith(",")
-                ? vehicle.getMechanicDecision().substring(0, vehicle.getMechanicDecision()
-                .lastIndexOf(",")) : vehicle.getMechanicDecision());
-
+        if (null != vehicle.getMechanicDecision()) {
+            vehicle.setMechanicDecision(vehicle.getMechanicDecision().endsWith(",")
+                    ? vehicle.getMechanicDecision().substring(0, vehicle.getMechanicDecision()
+                    .lastIndexOf(",")) : vehicle.getMechanicDecision());
+        }
     }
 
 

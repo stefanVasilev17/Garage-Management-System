@@ -2,11 +2,13 @@ package com.stefan.security.GarageModule.dto;
 
 import com.stefan.security.GarageModule.data.entity.BaseEntity;
 import com.stefan.security.GarageModule.data.entity.Client;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import jakarta.persistence.*;
 import java.time.LocalDate;
 
 

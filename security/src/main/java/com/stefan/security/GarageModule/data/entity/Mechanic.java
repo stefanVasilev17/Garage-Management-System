@@ -1,14 +1,13 @@
 package com.stefan.security.GarageModule.data.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.stefan.security.GarageModule.customAnnotations.KindOfServiceValidation;
 import com.stefan.security.GarageModule.customAnnotations.RankValidation;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.validation.annotation.Validated;
 
-import jakarta.persistence.*;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Min;
 import java.math.BigDecimal;
@@ -23,8 +22,8 @@ import java.util.List;
 @Validated
 public class Mechanic extends Human
 {
-  @KindOfServiceValidation
-  private String     qualification;
+  @Enumerated(EnumType.STRING)
+  private KindOfServices qualification;
   @RankValidation
   private String     typeOfMechanic;
   private String     specializedCarBrand;
@@ -33,9 +32,9 @@ public class Mechanic extends Human
   private BigDecimal salary;
   private boolean    isFree;
 
-  @ManyToOne(cascade = CascadeType.MERGE)
+  @ManyToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "garage_id")
-  @JsonIgnoreProperties({"hiredMechanics", "activeClients"})
+  @JsonIgnoreProperties({"hiredMechanics","activeClients"})
   private Garage garage;
 
   @OneToMany(mappedBy = "mechanic")
@@ -43,13 +42,14 @@ public class Mechanic extends Human
   private List<Vehicle> repairVehicles = new ArrayList<>();
 
 
-  public void setQualification(String qualification)
+  public void setQualification(KindOfServices qualification)
   {
-    this.qualification = qualification.toUpperCase();
+    this.qualification = qualification;
   }
 
   public void setTypeOfMechanic(String typeOfMechanic)
   {
     this.typeOfMechanic = typeOfMechanic.toUpperCase();
   }
+
 }

@@ -1,12 +1,12 @@
 package com.stefan.security.GarageModule.data.entity;
 
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import jakarta.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 
@@ -30,8 +30,8 @@ public class Vehicle extends BaseEntity
   @DateTimeFormat(pattern = "yyyy-MM-dd")
   private LocalDate year;
   @NotBlank
-  private String    driverComplaints;
-  private String    mechanicDecision;
+  private String    driverComplaints = "";
+  private String    mechanicDecision = "";
   private String    mechanics;
 
   @ManyToOne(cascade = CascadeType.MERGE)
