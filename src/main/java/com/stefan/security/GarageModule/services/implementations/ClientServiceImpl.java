@@ -5,7 +5,6 @@ import com.stefan.security.GarageModule.data.entity.Garage;
 import com.stefan.security.GarageModule.data.entity.Vehicle;
 import com.stefan.security.GarageModule.data.repository.ClientRepository;
 import com.stefan.security.GarageModule.data.repository.GarageRepository;
-import com.stefan.security.GarageModule.dto.ClientDTO;
 import com.stefan.security.GarageModule.services.ClientService;
 import com.stefan.security.GarageModule.services.VehicleService;
 import com.stefan.security.GarageModule.web.view.ClientView;

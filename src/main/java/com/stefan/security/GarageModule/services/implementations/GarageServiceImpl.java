@@ -2,10 +2,8 @@ package com.stefan.security.GarageModule.services.implementations;
 
 import com.stefan.security.GarageModule.data.entity.Garage;
 import com.stefan.security.GarageModule.data.repository.GarageRepository;
-import com.stefan.security.GarageModule.dto.GarageDTO;
 import com.stefan.security.GarageModule.services.GarageService;
 import lombok.AllArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -21,7 +19,6 @@ import java.util.NoSuchElementException;
 public class GarageServiceImpl implements GarageService
 {
   private final GarageRepository garageRepository;
-  private final ModelMapper        modelMapper = new ModelMapper();
 
   @Override
   public List<Garage> getGarages()
