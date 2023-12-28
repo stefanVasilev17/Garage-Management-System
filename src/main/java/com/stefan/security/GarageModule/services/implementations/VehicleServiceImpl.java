@@ -32,15 +32,11 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Override
     public Vehicle create(Vehicle vehicle) {
-        if (vehicleRepository.findVehicleByLicensePlate(vehicle.getLicensePlate())
-                .stream()
-                .anyMatch(vehicle1
-                        -> vehicle1.getLicensePlate()
-                        .equals(vehicle.getLicensePlate()))) {
+        if (null == vehicleRepository.findVehicleByLicensePlate(vehicle.getLicensePlate())) {
             throw new IllegalArgumentException("This vehicle " + vehicle.getLicensePlate() + " is already in the database!");
         }
         translateDriverComplaints(vehicle);
-        Client client = clientRepository.getById(vehicle.getClient().getId());
+        Client client = clientRepository.getReferenceById(vehicle.getClient().getId());
         vehicle.setClient(client);
         return vehicleRepository.save(vehicle);
     }

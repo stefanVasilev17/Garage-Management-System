@@ -61,13 +61,13 @@ public class ClientServiceImpl implements ClientService
       //    addNewClient.getOwnedVehicles().forEach(vehicleRepository::save);
     }
 
-    return clientRepository.save(addNewClient);
+    return addNewClient;
   }
 
   @Override
   public Client updateClient(Long id, Client updateClient)
   {
-    Client client = clientRepository.getById(id);
+    Client client = clientRepository.getReferenceById(id);
     client.setBudget(updateClient.getBudget());
 
     return clientRepository.save(client);

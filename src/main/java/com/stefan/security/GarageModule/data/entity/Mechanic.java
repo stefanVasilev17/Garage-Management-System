@@ -3,6 +3,7 @@ package com.stefan.security.GarageModule.data.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.stefan.security.GarageModule.customAnnotations.RankValidation;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,6 +21,7 @@ import java.util.List;
 @Entity
 @Table(name = "employee")
 @Validated
+@AllArgsConstructor
 public class Mechanic extends Human
 {
   @Enumerated(EnumType.STRING)
@@ -40,7 +42,6 @@ public class Mechanic extends Human
   @OneToMany(mappedBy = "mechanic")
   @JsonIgnoreProperties("mechanic")
   private List<Vehicle> repairVehicles = new ArrayList<>();
-
 
   public void setQualification(KindOfServices qualification)
   {

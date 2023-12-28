@@ -2,6 +2,7 @@ package com.stefan.security.GarageModule.data.entity;
 
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,7 +15,8 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "vehicle")
+@Table(name = "VEHICLE")
+@AllArgsConstructor
 public class Vehicle extends BaseEntity
 {
   private String    licensePlate;

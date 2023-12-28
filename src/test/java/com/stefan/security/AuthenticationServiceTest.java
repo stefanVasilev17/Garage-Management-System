@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class AuthenticationServiceTest {
+public class AuthenticationServiceTest {
 
     @Mock
     private UserRepository userRepository;
@@ -54,6 +54,7 @@ class AuthenticationServiceTest {
 
         when(userRepository.save(any())).thenReturn(savedUser);
         when(passwordEncoder.encode(registerRequest.getPassword())).thenReturn("encodedPassword");
+        when(jwtService.generateToken(savedUser)).thenReturn("john@example.com");
 
         AuthenticationResponse response = authenticationService.register(registerRequest);
 
@@ -72,6 +73,7 @@ class AuthenticationServiceTest {
                 .password("encodedPassword")
                 .role(Role.USER)
                 .build();
+
         UserDetails userDetails = org.springframework.security.core.userdetails.User
                 .withUsername(user.getEmail())
                 .password(user.getPassword())

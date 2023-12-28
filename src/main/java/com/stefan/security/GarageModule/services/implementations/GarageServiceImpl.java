@@ -9,9 +9,11 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import javax.ws.rs.ForbiddenException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @AllArgsConstructor
@@ -45,16 +47,16 @@ public class GarageServiceImpl implements GarageService
   public void deleteGarage(Long id)
   {
     Garage garage = garageRepository.findById(id).orElseThrow(()
-        -> new IllegalArgumentException("Invalid garage id:" + id));
-//    if (!garage.getActiveClients().isEmpty()) {
-//      throw new ForbiddenException("This garage cannot be deleted, because there are active clients. Please first fix the cars!");
-//    }
-//    else if (!garage.getHiredMechanics().isEmpty()) {
-//      throw new ForbiddenException("This garage cannot be deleted, because there are hired mechanics. Please, first fire them!");
-//    }
-    //else {
+        -> new NoSuchElementException("Invalid garage id:" + id));
+    if (!garage.getActiveClients().isEmpty()) {
+      throw new ForbiddenException("This garage cannot be deleted, because there are active clients. Please first fix the cars!");
+    }
+    else if (!garage.getHiredMechanics().isEmpty()) {
+      throw new ForbiddenException("This garage cannot be deleted, because there are hired mechanics. Please, first fire them!");
+    }
+    else {
       garageRepository.deleteById(id);
-    //}
+   }
   }
 
 

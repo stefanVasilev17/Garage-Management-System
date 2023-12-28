@@ -2,6 +2,7 @@ package com.stefan.security.GarageModule.data.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,6 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "clients")
+@AllArgsConstructor
 public class Client extends Human
 {
   private String     telephoneNumber;
