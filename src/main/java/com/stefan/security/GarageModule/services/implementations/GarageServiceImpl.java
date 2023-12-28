@@ -59,9 +59,4 @@ public class GarageServiceImpl implements GarageService
    }
   }
 
-
-  private GarageDTO convertToGarageDTO(Garage garage)
-  {
-    return modelMapper.map(garage, GarageDTO.class);
-  }
 }

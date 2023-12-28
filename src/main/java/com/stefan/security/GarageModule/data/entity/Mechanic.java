@@ -43,14 +43,5 @@ public class Mechanic extends Human
   @JsonIgnoreProperties("mechanic")
   private List<Vehicle> repairVehicles = new ArrayList<>();
 
-  public void setQualification(KindOfServices qualification)
-  {
-    this.qualification = qualification;
-  }
-
-  public void setTypeOfMechanic(String typeOfMechanic)
-  {
-    this.typeOfMechanic = typeOfMechanic.toUpperCase();
-  }
 
 }

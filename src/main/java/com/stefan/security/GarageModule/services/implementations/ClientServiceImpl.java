@@ -80,9 +80,4 @@ public class ClientServiceImpl implements ClientService
     clientRepository.deleteById(id);
   }
 
-  private ClientDTO convertToClientDto(Client client)
-  {
-    return modelMapper.map(client, ClientDTO.class);
-  }
-
 }
