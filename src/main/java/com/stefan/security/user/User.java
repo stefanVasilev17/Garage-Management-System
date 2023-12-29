@@ -12,7 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-@Data //equal to @Getter/@Setter
+@Data // @Getter/@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,7 +20,7 @@ import java.util.List;
 @Table(name = "_user") //different from mysql user tb
 public class User implements UserDetails {
     @Id
-    @GeneratedValue
+    @GeneratedValue //AUTO
     private Integer id;
     private String firstname;
     private String lastname;

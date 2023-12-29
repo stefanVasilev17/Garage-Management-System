@@ -41,7 +41,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         jwtToken = authHeader.substring(7); //After the first 7 characters of the string authHeader("Bearer " - 7 chars).
 
         //start to validate JWT
-        userEmail = jwtService.extractUsername(jwtToken);// todo extract userEmail from JWT token;
+        userEmail = jwtService.extractUsername(jwtToken);
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
 
@@ -52,10 +52,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         userDetails.getAuthorities()
                 );
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                //finish validation
-                //start update security context holder
 
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                SecurityContextHolder.getContext().setAuthentication(authToken); //update the security context holder
             }
         }
         filterChain.doFilter(request,response);

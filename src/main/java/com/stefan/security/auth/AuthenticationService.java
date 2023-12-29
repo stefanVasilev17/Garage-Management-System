@@ -10,6 +10,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.NoSuchElementException;
+
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -19,16 +21,22 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationResponse register(RegisterRequest request) {
-        var user = User.builder()
+
+        if(repository.findByEmail(request.getEmail()).isPresent()){
+            throw new IllegalArgumentException("The email exists in the database!");
+        }
+
+        User user = User.builder()
                 .firstname(request.getFirstname())
                 .lastname(request.getLastname())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.USER)
+                .role(Role.ADMIN)
                 .build();
 
+
         repository.save(user);
-        var jwtToken = jwtService.generateToken(user);
+        String jwtToken = jwtService.generateToken(user);
 
         return AuthenticationResponse
                 .builder()
@@ -37,14 +45,17 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                request.getEmail(),
-                request.getPassword()
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()
                 )
-        ); //authenticate if the username and password are correct
+        );
 
-        var user = repository.findByEmail(request.getEmail()).orElseThrow(); // todo need to handle the exception correctly
-        var jwtToken = jwtService.generateToken(user);
+        User user = repository.findByEmail(request.getEmail()).orElseThrow(
+                () -> new NoSuchElementException("Not existing user!" ));
+
+        String jwtToken = jwtService.generateToken(user);
 
         return AuthenticationResponse
                 .builder()
