@@ -36,12 +36,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         //checking the jwtToken
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
-            return; //I don't want to continue with the execution of the rest.
+            return;
         }
         jwtToken = authHeader.substring(7); //After the first 7 characters of the string authHeader("Bearer " - 7 chars).
-        //finish checking.
 
-        //start validate JWT
+        //start to validate JWT
         userEmail = jwtService.extractUsername(jwtToken);// todo extract userEmail from JWT token;
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
