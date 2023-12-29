@@ -57,7 +57,6 @@ public class ClientServiceImpl implements ClientService
         vehicleService.create(veh);
       }
 
-      //    addNewClient.getOwnedVehicles().forEach(vehicleRepository::save);
     }
 
     return addNewClient;

@@ -80,7 +80,7 @@ public class ClientController {
     }
 
     /**
-     * This method creates new vehicle.
+     * This method adds new vehicle.
      *
      * @param vehicle - vehicle's information.
      * @return created object.
@@ -104,6 +104,13 @@ public class ClientController {
      * This method fixes vehicle by id.
      *
      * @param id - id of the vehicle
+     * @param amountOfMoney - the fix cost.
+     * @param byFacture - paid by facture or not
+     * @param companyNumber - company number(if by facture = true)
+     * @param byCredit - paid by credit or not
+     * @param contractReqBody - contract information(if by credit = true)
+     *
+     * @return CashReceipt - receipt information
      */
     @PatchMapping("/fix-vehicle/{id}/{amount}")
     public CashReceipt fixVehicleById(@PathVariable("id") Long id,
@@ -123,7 +130,8 @@ public class ClientController {
      * @return MechanicView's object.
      */
     @GetMapping("/get-mechanics-by-qualification-and-by-garage-id/{qualification}/{id}")
-    public List<MechanicView> getMechanicsByQualificationAndByGarageId(@PathVariable("qualification") KindOfServices qualification, @PathVariable("id") Long id) {
+    public List<MechanicView> getMechanicsByQualificationAndByGarageId(@PathVariable("qualification") KindOfServices qualification,
+                                                                       @PathVariable("id") Long id) {
         return mechanicService.findMechanicByQualificationAndGarageId(qualification, id);
     }
 }

@@ -41,6 +41,17 @@ public class VehicleServiceImpl implements VehicleService {
         return vehicleRepository.save(vehicle);
     }
 
+    /**
+     * This method implements the logic to fix the vehicle.
+     * @param id - vehicle id
+     * @param amountOfMoney - the fix cost.
+     * @param byFacture - paid by facture or not
+     * @param companyNumber - company number(if by facture = true)
+     * @param byCredit - paid by credit or not
+     * @param contractReqBody - contract information(if by credit = true)
+     * @return CashReceipt - receipt information
+     *
+     * */
     @Override
     public CashReceipt fixVehicle(Long id,
                                   BigDecimal amountOfMoney,
