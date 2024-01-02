@@ -1,6 +1,9 @@
 package com.stefan.security.auth;
 
 import com.stefan.security.config.JwtService;
+import com.stefan.security.token.Token;
+import com.stefan.security.token.JwtTokenRepository;
+import com.stefan.security.token.TokenType;
 import com.stefan.security.user.Role;
 import com.stefan.security.user.User;
 import com.stefan.security.user.UserRepository;
@@ -15,14 +18,15 @@ import java.util.NoSuchElementException;
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
-    private final UserRepository repository;
+    private final UserRepository userRepository;
+    private final JwtTokenRepository jwtTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationResponse register(RegisterRequest request) {
 
-        if(repository.findByEmail(request.getEmail()).isPresent()){
+        if(userRepository.findByEmail(request.getEmail()).isPresent()){
             throw new IllegalArgumentException("The email exists in the database!");
         }
 
@@ -35,13 +39,28 @@ public class AuthenticationService {
                 .build();
 
 
-        repository.save(user);
+        User savedUser = userRepository.save(user);
         String jwtToken = jwtService.generateToken(user);
+
+        saveUserToken(savedUser, jwtToken);
 
         return AuthenticationResponse
                 .builder()
                 .token(jwtToken)
                 .build();
+    }
+
+    private void saveUserToken(User user, String jwtToken) {
+        var jwtTokenBuild = Token
+                .builder()
+                .user(user)
+                .token(jwtToken)
+                .tokenType(TokenType.BEARER)
+                .isRevoked(false)
+                .isExpired(false)
+                .build();
+
+        jwtTokenRepository.save(jwtTokenBuild);
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
@@ -52,10 +71,11 @@ public class AuthenticationService {
                 )
         );
 
-        User user = repository.findByEmail(request.getEmail()).orElseThrow(
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(
                 () -> new NoSuchElementException("Not existing user!" ));
 
         String jwtToken = jwtService.generateToken(user);
+        saveUserToken(user,jwtToken);
 
         return AuthenticationResponse
                 .builder()

@@ -13,3 +13,9 @@ spring:
         format-sql: true
     database: mysql
     database-platform: org.hibernate.dialect.MySQLDialect
+
+    spring:
+      jpa:
+        properties:
+          hibernate:
+            globally_quoted_identifiers=true:
