@@ -1,8 +1,8 @@
 package com.stefan.security.auth;
 
 import com.stefan.security.config.JwtService;
+import com.stefan.security.token.JwtRepository;
 import com.stefan.security.token.Token;
-import com.stefan.security.token.JwtTokenRepository;
 import com.stefan.security.token.TokenType;
 import com.stefan.security.user.Role;
 import com.stefan.security.user.User;
@@ -19,7 +19,7 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 public class AuthenticationService {
     private final UserRepository userRepository;
-    private final JwtTokenRepository jwtTokenRepository;
+    private final JwtRepository jwtTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
@@ -40,18 +40,31 @@ public class AuthenticationService {
 
 
         User savedUser = userRepository.save(user);
-        String jwtToken = jwtService.generateToken(user);
+        String jwt = jwtService.generateToken(user);
 
-        saveUserToken(savedUser, jwtToken);
+        saveUserToken(savedUser, jwt);
 
         return AuthenticationResponse
                 .builder()
-                .token(jwtToken)
+                .token(jwt)
                 .build();
     }
 
+    private void revokeAllUserTokens(User user){
+        var validUserTokens = jwtTokenRepository.findAllValidTokensByUserId(user.getId());
+        if(validUserTokens.isEmpty()) {
+            return;
+        }
+
+        validUserTokens.forEach(token -> {
+            token.setExpired(true);
+            token.setRevoked(true);
+        });
+        jwtTokenRepository.saveAll(validUserTokens);
+    }
+
     private void saveUserToken(User user, String jwtToken) {
-        var jwtTokenBuild = Token
+        var jwtBuild = Token
                 .builder()
                 .user(user)
                 .token(jwtToken)
@@ -60,7 +73,7 @@ public class AuthenticationService {
                 .isExpired(false)
                 .build();
 
-        jwtTokenRepository.save(jwtTokenBuild);
+        jwtTokenRepository.save(jwtBuild);
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
@@ -74,12 +87,13 @@ public class AuthenticationService {
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(
                 () -> new NoSuchElementException("Not existing user!" ));
 
-        String jwtToken = jwtService.generateToken(user);
-        saveUserToken(user,jwtToken);
+        String jwt = jwtService.generateToken(user);
+        revokeAllUserTokens(user);
+        saveUserToken(user,jwt);
 
         return AuthenticationResponse
                 .builder()
-                .token(jwtToken)
+                .token(jwt)
                 .build();
     }
 }

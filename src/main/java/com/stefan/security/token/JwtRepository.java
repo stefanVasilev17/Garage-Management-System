@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
-public interface JwtTokenRepository extends JpaRepository<Token,Integer> {
+public interface JwtRepository extends JpaRepository<Token,Integer> {
     @Query("SELECT tkn                                      "
           +  " FROM Token tkn                               "
           +  " INNER JOIN User usr ON tkn.user.id = usr.id  "

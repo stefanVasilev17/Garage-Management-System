@@ -1,5 +1,6 @@
 package com.stefan.security.config;
 
+import com.stefan.security.token.JwtRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,6 +23,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
+    private final JwtRepository jwtRepository;
 
 
     @Override
@@ -31,21 +33,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
 
         final String authHeader = request.getHeader("Authorization"); //contains the Bearer token
-        final String jwtToken;
+        final String jwt;
         final String userEmail;
-        //checking the jwtToken
+        //checking the jwt
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
-        jwtToken = authHeader.substring(7); //After the first 7 characters of the string authHeader("Bearer " - 7 chars).
+        jwt = authHeader.substring(7); //After the first 7 characters of the string authHeader("Bearer " - 7 chars).
 
         //start to validate JWT
-        userEmail = jwtService.extractUsername(jwtToken);
+        userEmail = jwtService.extractUsername(jwt);
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
 
-            if (jwtService.isTokenValid(jwtToken, userDetails)) {
+            var isTokenValid = jwtRepository.findByToken(jwt)
+                    .map(token -> !token.isExpired() && !token.isRevoked())
+                    .orElse(false);
+
+            if (jwtService.isTokenValid(jwt, userDetails) && isTokenValid) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails,
                         null,
