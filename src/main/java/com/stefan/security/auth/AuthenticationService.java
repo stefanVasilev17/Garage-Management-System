@@ -7,6 +7,7 @@ import com.stefan.security.token.TokenType;
 import com.stefan.security.user.Role;
 import com.stefan.security.user.User;
 import com.stefan.security.user.UserRepository;
+import com.stefan.security.validator.PasswordValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,12 +24,15 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final PasswordValidator passwordValidator;
 
     public AuthenticationResponse register(RegisterRequest request) {
 
-        if(userRepository.findByEmail(request.getEmail()).isPresent()){
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new IllegalArgumentException("The email exists in the database!");
         }
+
+        passwordValidator.isValidPassword(request.getPassword());
 
         User user = User.builder()
                 .firstname(request.getFirstname())
@@ -50,9 +54,9 @@ public class AuthenticationService {
                 .build();
     }
 
-    private void revokeAllUserTokens(User user){
+    private void revokeAllUserTokens(User user) {
         var validUserTokens = jwtTokenRepository.findAllValidTokensByUserId(user.getId());
-        if(validUserTokens.isEmpty()) {
+        if (validUserTokens.isEmpty()) {
             return;
         }
 
@@ -85,11 +89,11 @@ public class AuthenticationService {
         );
 
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(
-                () -> new NoSuchElementException("Not existing user!" ));
+                () -> new NoSuchElementException("Not existing user!"));
 
         String jwt = jwtService.generateToken(user);
         revokeAllUserTokens(user);
-        saveUserToken(user,jwt);
+        saveUserToken(user, jwt);
 
         return AuthenticationResponse
                 .builder()
