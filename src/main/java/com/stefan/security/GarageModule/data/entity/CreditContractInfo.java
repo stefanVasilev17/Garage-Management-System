@@ -16,7 +16,7 @@ public class CreditContractInfo extends CashReceipt {
     @Min(0)
     private BigDecimal monthlyPayment;
     @Min(0)
-    private BigDecimal salary;
+    private BigDecimal maxMonthlyPayment;
     private int creditDuration;
 
     public CreditContractInfo(Client clientInfo,
@@ -24,11 +24,11 @@ public class CreditContractInfo extends CashReceipt {
                               String fixedParts,
                               boolean byFacture,
                               BigDecimal monthlyPayment,
-                              BigDecimal salary,
+                              BigDecimal maxMonthlyPayment,
                               int creditDuration) {
         super(clientInfo, amount, fixedParts, byFacture);
         this.monthlyPayment = monthlyPayment;
-        this.salary = salary;
+        this.maxMonthlyPayment = maxMonthlyPayment;
         this.creditDuration = creditDuration;
     }
 }

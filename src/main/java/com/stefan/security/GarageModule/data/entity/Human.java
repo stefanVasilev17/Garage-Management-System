@@ -5,13 +5,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.NotBlank;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @MappedSuperclass
 public class Human extends BaseEntity
 {
-  //@NotBlank
+  @NotBlank
   private String name;
 
   private String surname;

@@ -42,7 +42,6 @@ public class AuthenticationService {
                 .role(Role.ADMIN)
                 .build();
 
-
         User savedUser = userRepository.save(user);
         String jwt = jwtService.generateToken(user);
 

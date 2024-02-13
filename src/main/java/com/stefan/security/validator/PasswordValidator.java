@@ -13,7 +13,7 @@ public class PasswordValidator {
     {
         if (password.length() > 15 || password.length() < 8)
         {
-            throw new IllegalArgumentException("Password must be less than 20 and more than 8 characters in length.");
+            throw new IllegalArgumentException("Password must be less than 15 and more than 8 characters in length.");
         }
         String upperCaseChars = "(.*[A-Z].*)";
         if (!password.matches(upperCaseChars ))

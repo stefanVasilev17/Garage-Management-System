@@ -14,5 +14,5 @@ public class CreditContractReqBody {
 
     private CreditDuration creditDuration;
     private long clientId;
-    private BigDecimal clientSalary;
+    private BigDecimal maxPaymentAmount;
 }

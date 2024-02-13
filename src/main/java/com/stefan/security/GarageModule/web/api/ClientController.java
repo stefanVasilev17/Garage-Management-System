@@ -112,7 +112,7 @@ public class ClientController {
      *
      * @return CashReceipt - receipt information
      */
-    @PatchMapping("/fix-vehicle/{id}/{amount}")
+    @PostMapping("/fix-vehicle/{id}/{amount}")
     public CashReceipt fixVehicleById(@PathVariable("id") Long id,
                                       @PathVariable("amount") BigDecimal amountOfMoney,
                                       @RequestParam("byFacture") boolean byFacture,
